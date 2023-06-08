@@ -1,0 +1,14 @@
+{
+	"name": "openfl-juggler",
+	"url": "https://github.com/MatseFR/openfl-juggler",
+	"license": "MIT",
+	"tags": [ "openfl", "flash", "air", "js", "web", "cpp" ],
+	"description": "A Juggler similar to Starling's Juggler",
+	"version": "0.0.1",
+	"releasenote": "initial release",
+	"contributors": [ "matse" ],
+	"dependencies": {
+		"openfl":""
+	},
+	"classPath": "src"
+}
