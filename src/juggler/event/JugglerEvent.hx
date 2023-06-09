@@ -28,9 +28,9 @@ class JugglerEvent extends Event
 		#if flash
 		return dispatcher.dispatchEvent(new JugglerEvent(type, bubbles, cancelable));
 		#else
-		var event = fromPool(type, bubbles, cancelable);
-		var result = dispatcher.dispatchEvent(event);
-		event.pool;
+		var event:JugglerEvent = fromPool(type, bubbles, cancelable);
+		var result:Bool = dispatcher.dispatchEvent(event);
+		event.pool();
 		return result;
 		#end
 	}
@@ -38,6 +38,15 @@ class JugglerEvent extends Event
 	public function new(type:String, bubbles:Bool = false, cancelable:Bool = false) 
 	{
 		super(type, bubbles, cancelable);
+	}
+	
+	override public function clone():Event 
+	{
+		#if flash
+		return new JugglerEvent(this.type, this.bubbles, this.cancelable);
+		#else
+		return fromPool(this.type, this.bubbles, this.cancelable);
+		#end
 	}
 	
 	#if !flash
