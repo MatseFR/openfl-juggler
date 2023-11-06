@@ -45,40 +45,220 @@ class Tween extends EventDispatcher implements IAnimatable
 {
 	private static inline var HINT_MARKER:String = "#";
 	
+	/** The time that has passed since the tween was created (in seconds). */
+	public var currentTime(get, never):Float;
+	/** The delay before the tween is started (in seconds). @default 0 */
+	public var delay(get, set):Float;
+	/** Indicates if the tween is finished. */
+	public var isComplete(get, never):Bool;
+	/** Another tween that will be started (i.e. added to the same juggler) as soon as 
+	 *  this tween is completed. */
+	public var nextTween(get, set):Tween;
+	/** A function that will be called when the tween is complete. */
+	public var onComplete(get, set):Function;
+	/** The arguments that will be passed to the 'onComplete' function. */
+	public var onCompleteArgs(get, set):Array<Dynamic>;
+	/** A function that will be called each time the tween finishes one repetition
+	 * (except the last, which will trigger 'onComplete'). */
+	public var onRepeat(get, set):Function;
+	/** The arguments that will be passed to the 'onRepeat' function. */
+	public var onRepeatArgs(get, set):Array<Dynamic>;
+	/** A function that will be called when the tween starts (after a possible delay). */
+	public var onStart(get, set):Function;
+	/** The arguments that will be passed to the 'onStart' function. */
+	public var onStartArgs(get, set):Array<Dynamic>;
+	/** A function that will be called each time the tween is advanced. */
+	public var onUpdate(get, set):Function;
+	/** The arguments that will be passed to the 'onUpdate' function. */
+	public var onUpdateArgs(get, set):Array<Dynamic>;
+	/** The current progress between 0 and 1, as calculated by the transition function. */
+	public var progress(get, never):Float;
+	/** The number of times the tween will be executed. 
+	 *  Set to '0' to tween indefinitely. @default 1 */
+	public var repeatCount(get, set):Int;
+	/** The amount of time to wait between repeat cycles (in seconds). @default 0 */
+	public var repeatDelay(get, set):Float;
+	/** Indicates if the tween should be reversed when it is repeating. If enabled, 
+	 *  every second repetition will be reversed. @default false */
+	public var reverse(get, set):Bool;
+	/** Indicates if the numeric values should be cast to Integers. @default false */
+	public var roundToInt(get, set):Bool;
+	/** The target object that is animated. */
+	public var target(get, never):Dynamic;
+	/** The total time the tween will take per repetition (in seconds). */
+	public var totalTime(get, never):Float;
+	/** The transition method used for the animation. @see Transitions */
+	public var transition(get, set):String;
+	/** The actual transition function used for the animation. */
+	public var transitionFunc(get, set):Float->Float;
+	
+	private var __currentTime:Float;
+	private function get_currentTime():Float { return this.__currentTime; }
+	
+	private var __delay:Float;
+	private function get_delay():Float { return this.__delay; }
+	private function set_delay(value:Float):Float
+	{
+		this.__currentTime = this.__currentTime + this.__delay - value;
+		return this.__delay = value;
+	}
+	
+	private function get_isComplete():Bool
+	{
+		return this.__currentTime >= this.__totalTime && this.__repeatCount == 1;
+	}
+	
+	private var __nextTween:Tween;
+	private function get_nextTween():Tween { return this.__nextTween; }
+	private function set_nextTween(value:Tween):Tween
+	{
+		return this.__nextTween = value;
+	}
+	
+	private var __onComplete:Function;
+	private function get_onComplete():Function { return this.__onComplete; }
+	private function set_onComplete(value:Function):Function
+	{
+		return this.__onComplete = value;
+	}
+	
+	private var __onCompleteArgs:Array<Dynamic>;
+	private function get_onCompleteArgs():Array<Dynamic> { return this.__onCompleteArgs; }
+	private function set_onCompleteArgs(value:Array<Dynamic>):Array<Dynamic>
+	{
+		return this.__onCompleteArgs = value;
+	}
+	
+	private var __onRepeat:Function;
+	private function get_onRepeat():Function { return this.__onRepeat; }
+	private function set_onRepeat(value:Function):Function
+	{
+		return this.__onRepeat = value;
+	}
+	
+	private var __onRepeatArgs:Array<Dynamic>;
+	private function get_onRepeatArgs():Array<Dynamic> { return this.__onRepeatArgs; }
+	private function set_onRepeatArgs(value:Array<Dynamic>):Array<Dynamic>
+	{
+		return this.__onRepeatArgs = value;
+	}
+	
+	private var __onStart:Function;
+	private function get_onStart():Function { return this.__onStart; }
+	private function set_onStart(value:Function):Function
+	{
+		return this.__onStart = value;
+	}
+	
+	private var __onStartArgs:Array<Dynamic>;
+	private function get_onStartArgs():Array<Dynamic> { return this.__onStartArgs; }
+	private function set_onStartArgs(value:Array<Dynamic>):Array<Dynamic>
+	{
+		return this.__onStartArgs = value;
+	}
+	
+	private var __onUpdate:Function;
+	private function get_onUpdate():Function { return this.__onUpdate; }
+	private function set_onUpdate(value:Function):Function
+	{
+		return this.__onUpdate = value;
+	}
+	
+	private var __onUpdateArgs:Array<Dynamic>;
+	private function get_onUpdateArgs():Array<Dynamic> { return this.__onUpdateArgs; }
+	private function set_onUpdateArgs(value:Array<Dynamic>):Array<Dynamic>
+	{
+		return this.__onUpdateArgs = value;
+	}
+	
+	private var __progress:Float;
+	private function get_progress():Float { return this.__progress; }
+	
+	private var __repeatCount:Int;
+	private function get_repeatCount():Int { return this.__repeatCount; }
+	private function set_repeatCount(value:Int):Int
+	{
+		return this.__repeatCount = value;
+	}
+	
+	private var __repeatDelay:Float;
+	private function get_repeatDelay():Float { return this.__repeatDelay; }
+	private function set_repeatDelay(value:Float):Float
+	{
+		return this.__repeatDelay = value;
+	}
+	
+	private var __reverse:Bool;
+	private function get_reverse():Bool { return this.__reverse; }
+	private function set_reverse(value:Bool):Bool
+	{
+		return this.__reverse = value;
+	}
+	
+	private var __roundToInt:Bool;
+	private function get_roundToInt():Bool { return this.__reverse; }
+	private function set_roundToInt(value:Bool):Bool
+	{
+		return this.__roundToInt = value;
+	}
+	
 	private var __target:Dynamic;
-	private var __transitionFunc:Float->Float;
+	private function get_target():Dynamic { return this.__target; }
+	
+	private var __totalTime:Float;
+	private function get_totalTime():Float { return this.__totalTime; }
+	
 	private var __transitionName:String;
+	private function get_transition():String { return this.__transitionName; }
+	private function set_transition(value:String):String
+	{
+		this.__transitionFunc = Transitions.getTransition(value);
+        
+        if (this.__transitionFunc == null)
+		{
+            throw new ArgumentError("Invalid transiton: " + value);
+		}
+		return this.__transitionName = value;
+	}
+	
+	private var __transitionFunc:Float->Float;
+	private function get_transitionFunc():Float->Float { return this.__transitionFunc; }
+	private function set_transitionFunc(value:Float->Float):Float->Float
+	{
+		this.__transitionName = "custom";
+		return this.__transitionFunc = value;
+	}
 	
 	private var __properties:Array<String>;
 	private var __startValues:Array<Float>;
 	private var __endValues:Array<Float>;
 	private var __updateFuncs:Array<String->Float->Float->Void>;
 	
-	private var __onStart:Function;
-	private var __onUpdate:Function;
-	private var __onRepeat:Function;
-	private var __onComplete:Function;
-	
-	private var __onStartArgs:Array<Dynamic>;
-	private var __onUpdateArgs:Array<Dynamic>;
-	private var __onRepeatArgs:Array<Dynamic>;
-	private var __onCompleteArgs:Array<Dynamic>;
-	
-	private var __totalTime:Float;
-	private var __currentTime:Float;
-	private var __progress:Float;
-	private var __delay:Float;
-	private var __roundToInt:Bool;
-	private var __nextTween:Tween;
-	private var __repeatCount:Int;
-	private var __repeatDelay:Float;
-	private var __reverse:Bool;
 	private var __currentCycle:Int;
 	
 	public function new(target:Dynamic, time:Float, transition:Dynamic = "linear") 
 	{
-		super(target);
-		
+		//super(target);
+		super();
+		reset(target, time, transition);
+	}
+	
+	public function clear():Void
+	{
+		// reset any object-references, to make sure we don't prevent any garbage collection
+		this.__onStart = this.__onUpdate = this.__onRepeat = this.__onComplete = null;
+		this.__onStartArgs = this.__onUpdateArgs = this.__onRepeatArgs = this.__onCompleteArgs = null;
+		this.__target = null;
+		this.__transitionFunc = null;
+		#if !flash
+		this.__removeAllListeners(); // not sure about this
+		#end
+	}
+	
+	public function pool():Void
+	{
+		clear();
+		_POOL[_POOL.length] = this;
 	}
 	
 	/** Resets the tween to its default values. Useful for pooling tweens. */
@@ -129,7 +309,7 @@ class Tween extends EventDispatcher implements IAnimatable
 		}
 		else
 		{
-			this.__startValues = new Array<Float>();
+			this.__endValues = new Array<Float>();
 		}
 		
 		if (this.__updateFuncs != null)
@@ -168,6 +348,19 @@ class Tween extends EventDispatcher implements IAnimatable
 		
 		this.__properties[pos] = getPropertyName(property);
 		this.__startValues[pos] = Math.NaN;
+		this.__endValues[pos] = endValue;
+		this.__updateFuncs[pos] = updateFunc;
+	}
+	
+	public function animateStartEnd(property:String, startValue:Float, endValue:Float):Void
+	{
+		if (this.__target == null) return; // tweening null just does nothing.
+		
+		var pos:Int = this.__properties.length;
+		var updateFunc:String->Float->Float->Void = getUpdateFuncFromProperty(property);
+		
+		this.__properties[pos] = getPropertyName(property);
+		this.__startValues[pos] = startValue;
 		this.__endValues[pos] = endValue;
 		this.__updateFuncs[pos] = updateFunc;
 	}
@@ -405,170 +598,12 @@ class Tween extends EventDispatcher implements IAnimatable
 		return this.__properties.indexOf(property) != -1;
 	}
 	
-	/** Indicates if the tween is finished. */
-	public var isComplete(get, never):Bool;
-	private function get_isComplete():Bool
-	{
-		return this.__currentTime >= this.__totalTime && this.__repeatCount == 1;
-	}
-	
-	/** The target object that is animated. */
-	public var target(get, never):Dynamic;
-	private function get_target():Dynamic { return this.__target; }
-	
-	/** The transition method used for the animation. @see Transitions */
-	public var transition(get, set):String;
-	private function get_transition():String { return this.__transitionName; }
-	private function set_transition(value:String):String
-	{
-		//this.__transitionFunc = 
-		return this.__transitionName = value;
-	}
-	
-	/** The actual transition function used for the animation. */
-	public var transitionFunc(get, set):Float->Float;
-	private function get_transitionFunc():Float->Float { return this.__transitionFunc; }
-	private function set_transitionFunc(value:Float->Float):Float->Float
-	{
-		this.__transitionName = "custom";
-		return this.__transitionFunc = value;
-	}
-	
-	/** The total time the tween will take per repetition (in seconds). */
-	public var totalTime(get, never):Float;
-	private function get_totalTime():Float { return this.__totalTime; }
-	
-	/** The time that has passed since the tween was created (in seconds). */
-	public var currentTime(get, never):Float;
-	private function get_currentTime():Float { return this.__currentTime; }
-	
-	/** The current progress between 0 and 1, as calculated by the transition function. */
-	public var progress(get, never):Float;
-	private function get_progress():Float { return this.__progress; }
-	
-	/** The delay before the tween is started (in seconds). @default 0 */
-	public var delay(get, set):Float;
-	private function get_delay():Float { return this.__delay; }
-	private function set_delay(value:Float):Float
-	{
-		this.__currentTime = this.__currentTime + this.__delay - value;
-		return this.__delay = value;
-	}
-	
-	/** The number of times the tween will be executed. 
-	 *  Set to '0' to tween indefinitely. @default 1 */
-	public var repeatCount(get, set):Int;
-	private function get_repeatCount():Int { return this.__repeatCount; }
-	private function set_repeatCount(value:Int):Int
-	{
-		return this.__repeatCount = value;
-	}
-	
-	/** The amount of time to wait between repeat cycles (in seconds). @default 0 */
-	public var repeatDelay(get, set):Float;
-	private function get_repeatDelay():Float { return this.__repeatDelay; }
-	private function set_repeatDelay(value:Float):Float
-	{
-		return this.__repeatDelay = value;
-	}
-	
-	/** Indicates if the tween should be reversed when it is repeating. If enabled, 
-	 *  every second repetition will be reversed. @default false */
-	public var reverse(get, set):Bool;
-	private function get_reverse():Bool { return this.__reverse; }
-	private function set_reverse(value:Bool):Bool
-	{
-		return this.__reverse = value;
-	}
-	
-	/** Indicates if the numeric values should be cast to Integers. @default false */
-	public var roundToInt(get, set):Bool;
-	private function get_roundToInt():Bool { return this.__reverse; }
-	private function set_roundToInt(value:Bool):Bool
-	{
-		return this.__roundToInt = value;
-	}
-	
-	/** A function that will be called when the tween starts (after a possible delay). */
-	public var onStart(get, set):Function;
-	private function get_onStart():Function { return this.__onStart; }
-	private function set_onStart(value:Function):Function
-	{
-		return this.__onStart = value;
-	}
-	
-	/** A function that will be called each time the tween is advanced. */
-	public var onUpdate(get, set):Function;
-	private function get_onUpdate():Function { return this.__onUpdate; }
-	private function set_onUpdate(value:Function):Function
-	{
-		return this.__onUpdate = value;
-	}
-	
-	/** A function that will be called each time the tween finishes one repetition
-	 * (except the last, which will trigger 'onComplete'). */
-	public var onRepeat(get, set):Function;
-	private function get_onRepeat():Function { return this.__onRepeat; }
-	private function set_onRepeat(value:Function):Function
-	{
-		return this.__onRepeat = value;
-	}
-	
-	/** A function that will be called when the tween is complete. */
-	public var onComplete(get, set):Function;
-	private function get_onComplete():Function { return this.__onComplete; }
-	private function set_onComplete(value:Function):Function
-	{
-		return this.__onComplete = value;
-	}
-	
-	/** The arguments that will be passed to the 'onStart' function. */
-	public var onStartArgs(get, set):Array<Dynamic>;
-	private function get_onStartArgs():Array<Dynamic> { return this.__onStartArgs; }
-	private function set_onStartArgs(value:Array<Dynamic>):Array<Dynamic>
-	{
-		return this.__onStartArgs = value;
-	}
-	
-	/** The arguments that will be passed to the 'onUpdate' function. */
-	public var onUpdateArgs(get, set):Array<Dynamic>;
-	private function get_onUpdateArgs():Array<Dynamic> { return this.__onUpdateArgs; }
-	private function set_onUpdateArgs(value:Array<Dynamic>):Array<Dynamic>
-	{
-		return this.__onUpdateArgs = value;
-	}
-	
-	/** The arguments that will be passed to the 'onRepeat' function. */
-	public var onRepeatArgs(get, set):Array<Dynamic>;
-	private function get_onRepeatArgs():Array<Dynamic> { return this.__onRepeatArgs; }
-	private function set_onRepeatArgs(value:Array<Dynamic>):Array<Dynamic>
-	{
-		return this.__onRepeatArgs = value;
-	}
-	
-	/** The arguments that will be passed to the 'onComplete' function. */
-	public var onCompleteArgs(get, set):Array<Dynamic>;
-	private function get_onCompleteArgs():Array<Dynamic> { return this.__onCompleteArgs; }
-	private function set_onCompleteArgs(value:Array<Dynamic>):Array<Dynamic>
-	{
-		return this.__onCompleteArgs = value;
-	}
-	
-	/** Another tween that will be started (i.e. added to the same juggler) as soon as 
-	 *  this tween is completed. */
-	public var nextTween(get, set):Tween;
-	private function get_nextTween():Tween { return this.__nextTween; }
-	private function set_nextTween(value:Tween):Tween
-	{
-		return this.__nextTween = value;
-	}
-	
 	// tween pooling
 	
 	private static var _POOL:Array<Tween> = new Array<Tween>();
 	
 	@:allow(juggler.animation.Juggler)
-	private static function fromPool(target:Dynamic, time:Float, transition:Dynamic = "linear"):Tween
+	public static function fromPool(target:Dynamic, time:Float, transition:Dynamic = "linear"):Tween
 	{
 		if (_POOL.length != 0) return _POOL.pop().reset(target, time, transition);
 		return new Tween(target, time, transition);
@@ -577,14 +612,7 @@ class Tween extends EventDispatcher implements IAnimatable
 	@:allow(juggler.animation.Juggler)
 	private static function toPool(tween:Tween):Void
 	{
-		// reset any object-references, to make sure we don't prevent any garbage collection
-		tween.__onStart = tween.__onUpdate = tween.__onRepeat = tween.__onComplete = null;
-		tween.__onStartArgs = tween.__onUpdateArgs = tween.__onRepeatArgs = tween.__onCompleteArgs = null;
-		tween.__target = null;
-		tween.__transitionFunc = null;
-		#if !flash
-		tween.__removeAllListeners(); // not sure about this
-		#end
+		tween.clear();
 		_POOL[_POOL.length] = tween;
 	}
 	
