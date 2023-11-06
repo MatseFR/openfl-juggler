@@ -39,7 +39,7 @@ class Transitions
 	public static inline var EASE_IN:String = "easeIn";
 	public static inline var EASE_OUT:String = "easeOut";
 	public static inline var EASE_IN_OUT:String = "easeInOut";
-	public static inline var EASE_OUT_IN:String = "easeOutIn";        
+	public static inline var EASE_OUT_IN:String = "easeOutIn";
 	public static inline var EASE_IN_BACK:String = "easeInBack";
 	public static inline var EASE_OUT_BACK:String = "easeOutBack";
 	public static inline var EASE_IN_OUT_BACK:String = "easeInOutBack";
@@ -47,11 +47,19 @@ class Transitions
 	public static inline var EASE_IN_ELASTIC:String = "easeInElastic";
 	public static inline var EASE_OUT_ELASTIC:String = "easeOutElastic";
 	public static inline var EASE_IN_OUT_ELASTIC:String = "easeInOutElastic";
-	public static inline var EASE_OUT_IN_ELASTIC:String = "easeOutInElastic";  
+	public static inline var EASE_OUT_IN_ELASTIC:String = "easeOutInElastic";
 	public static inline var EASE_IN_BOUNCE:String = "easeInBounce";
 	public static inline var EASE_OUT_BOUNCE:String = "easeOutBounce";
 	public static inline var EASE_IN_OUT_BOUNCE:String = "easeInOutBounce";
 	public static inline var EASE_OUT_IN_BOUNCE:String = "easeOutInBounce";
+	
+	public static var transitionNames(get, never):Array<String>;
+	private static var _transitionNames:Array<String>;
+	private static function get_transitionNames():Array<String>
+	{
+		if (_transitionNames == null) registerDefaults();
+		return _transitionNames;
+	}
 	
 	private static var sTransitions:Map<String, Float->Float>;
 	
@@ -61,7 +69,7 @@ class Transitions
 	private static inline var BOUNCE_RATIO_1_0:Float = 0.36363636363636363636363636363636;
 	private static inline var BOUNCE_RATIO_1_5:Float = 0.54545454545454545454545454545455;
 	private static inline var BOUNCE_RATIO_2_0:Float = 0.72727272727272727272727272727273;
-	private static inline var BOUNCE_RATIO_2_25:Float = 0,81818181818181818181818181818182;
+	private static inline var BOUNCE_RATIO_2_25:Float = 0.81818181818181818181818181818182;
 	private static inline var BOUNCE_RATIO_2_5:Float = 0.90909090909090909090909090909091;
 	private static inline var BOUNCE_RATIO_2_625:Float = 0.95454545454545454545454545454545;
 	private static inline var ELASTIC_CONSTANT_1:Float = 0.3;
@@ -79,11 +87,13 @@ class Transitions
 	public static function register(name:String, func:Float->Float):Void
 	{
 		if (sTransitions == null) registerDefaults();
+		transitionNames[transitionNames.length] = name;
 		sTransitions[name] = func;
 	}
 	
 	private static function registerDefaults():Void
 	{
+		_transitionNames = new Array<String>();
 		sTransitions = new Map<String, Float->Float>();
 		
 		register(LINEAR, linear);
