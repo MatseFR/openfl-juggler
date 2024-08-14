@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"tags": [ "openfl", "flash", "air", "js", "web", "cpp" ],
 	"description": "A Juggler similar to Starling's Juggler",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"releasenote": "initial release",
 	"contributors": [ "matse" ],
 	"dependencies": {
