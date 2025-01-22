@@ -26,6 +26,26 @@ class Juggler implements IAnimatable
 {
 	public static var root(default, null):Juggler = new Juggler();
 	
+	public static var autoUpdate(get, set):Bool;
+	private static var __autoUpdate:Bool;
+	private static function get_autoUpdate():Bool { return __autoUpdate; }
+	private static function set_autoUpdate(value:Bool):Bool
+	{
+		if (__autoUpdate == value) return value;
+		
+		if (value)
+		{
+			Lib.current.stage.addEventListener(Event.ENTER_FRAME, __rootEnterFrame);
+			__timeStamp = Lib.getTimer() / 1000.0;
+		}
+		else
+		{
+			Lib.current.stage.removeEventListener(Event.ENTER_FRAME, __rootEnterFrame);
+		}
+		
+		return __autoUpdate = value;
+	}
+	
 	public static var isStarted(get, never):Bool;
 	private static function get_isStarted():Bool { return __isStarted; }
 	
@@ -35,18 +55,20 @@ class Juggler implements IAnimatable
 	private static var sCurrentObjectID:Int = 0;
 	private static var sTweenInstanceFields:Array<String>;
 	
-	public static function start():Void
+	public static function start(autoUpdate:Bool = true):Void
 	{
 		if (__isStarted) return;
-		Lib.current.stage.addEventListener(Event.ENTER_FRAME, __rootEnterFrame);
-		__timeStamp = Lib.getTimer() / 1000.0;
+		//Lib.current.stage.addEventListener(Event.ENTER_FRAME, __rootEnterFrame);
+		//__timeStamp = Lib.getTimer() / 1000.0;
+		Juggler.autoUpdate = autoUpdate;
 		__isStarted = true;
 	}
 	
 	public static function stop():Void
 	{
 		if (!__isStarted) return;
-		Lib.current.stage.addEventListener(Event.ENTER_FRAME, __rootEnterFrame);
+		//Lib.current.stage.removeEventListener(Event.ENTER_FRAME, __rootEnterFrame);
+		autoUpdate = false;
 		__isStarted = false;
 	}
 	
